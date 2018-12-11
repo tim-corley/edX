@@ -6,8 +6,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 app = Flask(__name__)
 
-# engine = create_engine('SQLALCHEMY_DATABASE_URI')
-engine = create_engine('postgresql://tcorley:Celtics215@localhost/week4')
+engine = create_engine('SQLALCHEMY_DATABASE_URI')
 db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/")
