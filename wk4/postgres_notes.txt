@@ -1,0 +1,69 @@
+Start-up a local, postgres server to host a database:
+
+Start Postgres prompt:
+$ psql {database name}  --> {database name}=#
+
+Exit Postgres prompt:
+{database name}=+ \q
+
+-- within psql prompt --
+
+1) Create Table
+
+week4=# CREATE TABLE flights (
+week4(#   id SERIAL PRIMARY KEY,
+week4(#   origin VARCHAR NOT NULL,
+week4(#   destination VARCHAR NOT NULL,
+week4(#   duration INTEGER NOT NULL
+week4(# );
+CREATE TABLE
+
+week4=# \d
+week4=# \l
+week4=# SELECT * FROM flights;
+
+2) Add Data
+
+week4=# INSERT INTO flights (origin, destination, duration) VALUES ('New York', 'London', 415);
+INSERT 0 1
+week4=# INSERT INTO flights (origin, destination, duration) VALUES ('Shanghai', 'Paris', 760);
+INSERT 0 1
+week4=# INSERT INTO flights (origin, destination, duration) VALUES ('Istanbul', 'Tokyo', 700);
+INSERT 0 1
+week4=# INSERT INTO flights (origin, destination, duration) VALUES ('New York', 'Paris', 435);
+INSERT 0 1
+week4=# INSERT INTO flights (origin, destination, duration) VALUES ('Moscow', 'Paris', 415);
+INSERT 0 1
+week4=# INSERT INTO flights (origin, destination, duration) VALUES ('Lima', 'New York', 455);
+INSERT 0 1
+
+week4=# SELECT * FROM flights;
+
+week4=# SELECT * FROM flights WHERE id =3;
+
+week4=# SELECT * FROM flights WHERE origin = 'New York';
+
+week4=# SELECT * FROM flights WHERE destination = 'Paris' AND duration > 500;
+
+week4=# SELECT * FROM flights ORDER BY duration ASC;
+
+3) Update / Change / Delete Data
+
+week4=# UPDATE flights SET duration = 245 WHERE origin = 'Moscow' AND destination = 'Paris';
+UPDATE 1
+
+week4=# DELETE FROM flights WHERE destination = 'Tokyo';
+
+4) Select (view) data from separate tables via JOIN
+
+week4=# SELECT origin, destination, name FROM flights JOIN passengers ON passengers.flight_id = flights.id;
+
+5) Other queries
+
+week4=# SELECT origin, COUNT(*) FROM flights GROUP BY origin;
+
+week4=# SELECT origin, COUNT(*) FROM flights GROUP BY origin HAVING COUNT(*) >1;
+
+week4=# SELECT flight_id FROM passengers GROUP BY flight_id HAVING COUNT(*) > 1;
+
+week4=# SELECT * FROM flights WHERE id IN (SELECT flight_id FROM passengers GROUP BY flight_id HAVING COUNT(*) > 1);

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Is It My Birthday?</title>
+    <style>
+      body {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    {% if my_birthday %}
+      <h1> Yes! Happy Birthday!</h1>
+    {% else %}
+      <h1>Nah, Not Yet...</h1>
+    {% endif %}
+
+    <a href="{{ url_for('show_names') }}">See some "random" names here</a>
+
+  </body>
+</html>
