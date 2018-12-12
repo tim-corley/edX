@@ -1,9 +1,10 @@
 import os
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-engine = create_engine('SQLALCHEMY_DATABASE_URI')
+POSTGRES = os.environ.get('SQLALCHEMY_DATABASE_URI')
+
+engine = create_engine(POSTGRES)
 db = scoped_session(sessionmaker(bind=engine))
 
 def main():
