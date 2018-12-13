@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+
+              // have each button change the color of the heading
+              document.querySelectorAll('.color-change').forEach(button => {
+                  button.onclick = () => {
+                    document.querySelector('#hello').style.color = button.dataset.color;
+                  };
+              });
+            });
+        </script>
+        <title>My Site</title>
+    </head>
+    <body>
+        <h1 id="hello">Hello!</h1>
+        <button class="color-change" data-color="red">RED</button>
+        <button class="color-change" data-color="blue">BLUE</button>
+        <button class="color-change" data-color="green">GREEN</button>
+    </body>
+</html>
