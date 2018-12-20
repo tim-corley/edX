@@ -1,0 +1,9 @@
+authentication tcorley$ python manage.py shell
+
+>>> from django.contrib.auth.models import User
+>>> user = User.objects.create_user("f.reynolds", "frank@iasip.com", "testing123")
+>>> user.first_name = "Frank"
+>>> user.last_name = "Reynolds"
+>>> user.save()
+
+can also do this via /admin console (if superuser)
