@@ -14,12 +14,9 @@ def index(request):
     return render(request, "users/user.html", context)
 
 def login_view(request):
-    try:
-        username = request.POST["username"]
-        password = request.POST["password"]
-        user = authenticate(request, username=username, password=password)
-    except ValueError:
-        return render(request, "users/login.html", {"message": "No Username or Password Given."})
+    username = request.POST["username"]
+    password = request.POST["password"]
+    user = authenticate(request, username=username, password=password)
     if user is not None:
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
