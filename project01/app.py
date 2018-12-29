@@ -4,7 +4,7 @@ from flask import Flask, flash, redirect, url_for, render_template, request, ses
 from flask_session import Session
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField
+from wtforms import StringField, PasswordField, BooleanField, SelectField
 from wtforms.validators import InputRequired, Email, Length
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -39,6 +39,14 @@ class RegisterForm(FlaskForm):
     password = PasswordField('Password', validators=[InputRequired(), Length(min=6, max=80)])
     email = StringField('Email', validators=[InputRequired(), Email(message='Invalid Email'), Length(max=50)])
 
+class BookSearchForm(FlaskForm):
+    choices = [('ISBN', 'ISBN'),
+               ('Title', 'Title'),
+               ('Author', 'Author'),
+               ('Year', 'Year')]
+    select = SelectField('Search for book:', choices=choices)
+    search = StringField('', validators=[InputRequired(), Length(min=4, max=80)])
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -56,7 +64,7 @@ def login():
         if user:
             if check_password_hash(user.password, form.password.data):
                 login_user(user, remember=form.remember.data)
-                return redirect(url_for('splash'))
+                return redirect(url_for('search'))
 
         return '<h1>Invalid Username or Password.</h1>'
 
@@ -72,9 +80,37 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
-        return '<h1>New User Successfully Created!</h1>'
+        if check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
+            return redirect(url_for('search'))
 
     return render_template('register.html', form=form)
+
+@app.route('/search', methods=['GET', 'POST'])
+@login_required
+def search():
+    search = BookSearchForm(request.form)
+    if request.method == 'POST':
+        return search_results(search)
+
+    return render_template('search.html', form=search, name=current_user.username)
+
+@app.route('/results', methods=['POST'])
+@login_required
+def search_results(search):
+    results = []
+    search_string = search.data['search']
+
+    if search.data['search'] == '':
+        qry = db_session.query(title)
+        results = qry.all()
+
+    if not results:
+        flash('No results found!')
+        return redirect('search')
+    else:
+        # display results
+        return render_template('results.html', results=results)
 
 @app.route('/splash')
 @login_required

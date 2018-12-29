@@ -1,0 +1,24 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}
+Demo App
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{url_for('.static', filename='style.css')}}">
+{% endblock %}
+
+
+{% block body %}
+
+    <h1>Results</h1>
+    <ul>
+        {% for book in books %}
+          <li>{{ book.title }}</li>
+        {% else %}
+          <li>No books.</li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}
