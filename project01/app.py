@@ -26,7 +26,6 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.secret_key = ('SESSION_KEY')
 app.config['SESSION_TYPE'] = 'filesystem'
-engine = create_engine(POSTGRES)
 db.init_app(app)
 
 class LoginForm(FlaskForm):
@@ -40,12 +39,7 @@ class RegisterForm(FlaskForm):
     email = StringField('Email', validators=[InputRequired(), Email(message='Invalid Email'), Length(max=50)])
 
 class BookSearchForm(FlaskForm):
-    choices = [('ISBN', 'ISBN'),
-               ('Title', 'Title'),
-               ('Author', 'Author'),
-               ('Year', 'Year')]
-    select = SelectField('Search for book:', choices=choices)
-    search = StringField('', validators=[InputRequired(), Length(min=4, max=80)])
+    search = StringField('Search Term', validators=[InputRequired(), Length(min=4, max=80)])
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -89,28 +83,12 @@ def register():
 @app.route('/search', methods=['GET', 'POST'])
 @login_required
 def search():
-    search = BookSearchForm(request.form)
-    if request.method == 'POST':
-        return search_results(search)
-
-    return render_template('search.html', form=search, name=current_user.username)
-
-@app.route('/results', methods=['POST'])
-@login_required
-def search_results(search):
-    results = []
-    search_string = search.data['search']
-
-    if search.data['search'] == '':
-        qry = db_session.query(title)
-        results = qry.all()
-
-    if not results:
-        flash('No results found!')
-        return redirect('search')
-    else:
-        # display results
-        return render_template('results.html', results=results)
+    form = BookSearchForm()
+    if form.validate_on_submit():
+        details = Books.query.filter_by(title=form.search.data).first()
+        results = details.title + ' By: ' + details.author
+        return render_template('search.html', form=form, results=results, name=current_user.username)
+    return render_template('search.html', form=form, name=current_user.username)
 
 @app.route('/splash')
 @login_required

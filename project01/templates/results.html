@@ -13,12 +13,7 @@ Demo App
 {% block body %}
 
     <h1>Results</h1>
-    <ul>
-        {% for book in books %}
-          <li>{{ book.title }}</li>
-        {% else %}
-          <li>No books.</li>
-        {% endfor %}
-    </ul>
+
+    {{ results }}
 
 {% endblock %}

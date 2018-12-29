@@ -13,7 +13,7 @@ def main():
     details = db.execute("SELECT title, author, year FROM books WHERE isbn = :isbn",
                         {"isbn": isbn}).fetchall()
 
-    # make sure flight is valid
+    # make sure isbn is valid
     if not details:
         print('No such ISBN available')
     else:

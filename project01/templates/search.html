@@ -1,4 +1,5 @@
 {% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}
 Demo App
@@ -37,12 +38,15 @@ Demo App
 
       <div class="search-box">
         <h1>Search Books</h1>
-          <form action="{{ url_for('search_results') }}" method="post"
+          <form class="form-search" method="POST" action="/search">
             <p class="description">Search by ISBN, Title, Author, or Publication Year.</p>
-                <div class="form-group">
-                  <input type="text" class="form-control" name="search" placeholder="Search..." required minlength="2">
-                </div>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Search</button>
+            {{ form.hidden_tag() }}
+            {{ wtf.form_field(form.search) }}
+            {% if results %}
+              {{ results }}
+            {% endif %}
+          <button class="btn btn-lg btn-primary btn-block" type="submit">Search</button>
+        </form>
       </div>
 
     </div><!-- /.container -->
