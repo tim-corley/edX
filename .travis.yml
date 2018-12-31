@@ -4,13 +4,13 @@ python:
 install:
     - pip3 install -r requirements.txt
 before_script:
-  - psql -c 'create database travis_ci_test;' -U postgres
+  # - psql -c 'create database travis_ci_test;' -U postgres
 script:
-    # - cd wk9/airline3
-    # - python3 manage.py test
-    - cd project01
-    - python3 test_app.py
+    - cd wk9/airline3
+    - python3 manage.py test
+    # - cd project01
+    # - python3 test_app.py
 branches:
   only:
   - master
-  - /.*/
+  # - /.*/
