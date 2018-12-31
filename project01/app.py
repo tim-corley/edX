@@ -96,11 +96,13 @@ def search():
     return render_template('search.html', form=form, name=current_user.username)
 
 @app.route("/books")
+@login_required
 def books():
     books = db.execute("SELECT * FROM books").fetchall()
     return render_template("books.html", books=books)
 
 @app.route("/details/<int:book_id>")
+@login_required
 def details(book_id):
     # Make sure book exists
     book = db.execute("SELECT * FROM books WHERE id = :id", {"id": book_id}).fetchone()
@@ -118,7 +120,6 @@ def splash():
     return render_template('splash.html', name=current_user.username)
 
 @app.route('/logout')
-@login_required
 def logout():
     logout_user()
     return redirect(url_for('index'))

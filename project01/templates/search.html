@@ -28,6 +28,7 @@ Book Search
             <li><a href="{{ url_for('login') }}">Login</a></li>
             <li><a href="{{ url_for('register') }}">Register</a></li>
             <li class="active"><a href="{{ url_for('search') }}">Search</a></li>
+            <li><a href="{{ url_for('logout') }}">Logout</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -49,11 +50,11 @@ Book Search
             <h1>Results:</h1>
             <ul>
               {% for result in results %}
-              <li>{{ result.title }} By: {{ result.author}}</li>
+              <li>{{ result.title }} By: {{ result.author}}  |  <a href="{{ url_for('details', book_id=result.id) }}">Details</a></li>
               {% endfor %}
-          {% else %}
-            <h1>Results:</h1>
-              <p>No Results.</p>
+            {% else %}
+              <h1>Results:</h1>
+                <p>No Results.</p>
           {% endif %}
             </ul>
         </form>
