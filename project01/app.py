@@ -27,6 +27,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.secret_key = ('SESSION_KEY')
 app.config['SESSION_TYPE'] = 'filesystem'
 db.init_app(app)
+engine = create_engine(POSTGRES)
+db = scoped_session(sessionmaker(bind=engine))
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[InputRequired(), Length(min=4, max=20)])
@@ -85,9 +87,15 @@ def register():
 def search():
     form = BookSearchForm()
     if form.validate_on_submit():
-        details = Books.query.filter_by(title=form.search.data).one()
-        results = details.title + ' By: ' + details.author
-        return render_template('search.html', form=form, results=results, name=current_user.username)
+        text = form.search.data
+        result = db.execute(
+            "SELECT * FROM books WHERE (LOWER(isbn) LIKE LOWER(:text)) OR (LOWER(title) LIKE LOWER(:text)) OR (author LIKE LOWER(:text)) LIMIT 10",
+            { "text": '%' + text + '%'}
+        ).fetchall()
+        data = []
+        for row in result:
+            data.append(dict(row))
+        return render_template('search.html', form=form, results=result, name=current_user.username)
     return render_template('search.html', form=form, name=current_user.username)
 
 @app.route('/splash')
