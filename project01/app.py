@@ -95,6 +95,23 @@ def search():
         return render_template('search.html', form=form, results=results, name=current_user.username)
     return render_template('search.html', form=form, name=current_user.username)
 
+@app.route("/books")
+def books():
+    books = db.execute("SELECT * FROM books").fetchall()
+    return render_template("books.html", books=books)
+
+@app.route("/details/<int:book_id>")
+def details(book_id):
+    # Make sure book exists
+    book = db.execute("SELECT * FROM books WHERE id = :id", {"id": book_id}).fetchone()
+    if book is None:
+        return render_template("error.html", message="No such book exists here.")
+
+    # Get all details
+    results = db.execute("SELECT * FROM books WHERE id = :book_id",
+                            {"book_id": book_id})
+    return render_template("details.html", book=book)
+
 @app.route('/splash')
 @login_required
 def splash():

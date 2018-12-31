@@ -1,8 +1,7 @@
 {% extends "bootstrap/base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}
-Book Search
+Demo App
 {% endblock %}
 
 {% block styles %}
@@ -27,7 +26,7 @@ Book Search
             <li><a href="#">Home</a></li>
             <li><a href="{{ url_for('login') }}">Login</a></li>
             <li><a href="{{ url_for('register') }}">Register</a></li>
-            <li class="active"><a href="{{ url_for('search') }}">Search</a></li>
+            <li><a href="{{ url_for('search') }}">Search</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -35,28 +34,17 @@ Book Search
 
     <div class="container">
 
-      <h1 class="page-header">Welcome, {{ name }}</h1>
-
-      <div class="search-box">
-        <h1>Search Books</h1>
-          <form class="form-search" method="POST" action="/search">
-            <p class="description">Search by ISBN, Title, Author, or Publication Year.</p>
-            {{ form.hidden_tag() }}
-            {{ wtf.form_field(form.search) }}
-          <button class="btn btn-lg btn-primary btn-block" type="submit">Search</button>
-          <br>
-          {% if results %}
-            <h1>Results:</h1>
-            <ul>
-              {% for result in results %}
-              <li>{{ result.title }} By: {{ result.author}}</li>
-              {% endfor %}
-          {% else %}
-            <h1>Results:</h1>
-              <p>No Results.</p>
-          {% endif %}
-            </ul>
-        </form>
+      <div class="book-list">
+        <h1>All Books Available</h1>
+        <ul>
+          {% for book in books %}
+              <li>
+                  <a href="{{ url_for('details', book_id=book.id) }}">
+                      {{ book.title }} By: {{ book.author }}
+                  </a>
+              </li>
+          {% endfor %}
+        </ul>
       </div>
 
     </div><!-- /.container -->
