@@ -4,8 +4,10 @@ python:
 install:
     - pip3 install -r requirements.txt
 script:
-    - cd wk9/airline3
-    - python3 manage.py test
+    # - cd wk9/airline3
+    # - python3 manage.py test
+    - cd project01
+    - python -m unittest discover
 branches:
   only:
   - master
