@@ -28,13 +28,21 @@ class SearchViewTest(unittest.TestCase):
         # assert the status code of the response
         self.assertEqual(result.status_code, 200)
 
-    def test_home_data(self):
+    def test_login_status_code(self):
         # sends HTTP GET request to the application
         # on the specified path
-        result = self.app.get('/')
+        result = self.app.get('/login')
 
-        # assert the response data
-        self.assertEqual(result.data, "Hi ! I\'m a Flask application.")
+        # assert the status code of the response
+        self.assertEqual(result.status_code, 200)
+
+    def test_register_status_code(self):
+        # sends HTTP GET request to the application
+        # on the specified path
+        result = self.app.get('/register')
+
+        # assert the status code of the response
+        self.assertEqual(result.status_code, 200)
 
     def test_search_status_code(self):
         # sends HTTP GET request to the application
@@ -42,15 +50,7 @@ class SearchViewTest(unittest.TestCase):
         result = self.app.get('/search')
 
         # assert the status code of the response
-        self.assertEqual(result.status_code, 200)
-
-    def test_search_data(self):
-        # sends HTTP GET request to the application
-        # on the specified path
-        result = self.app.get('/search')
-
-        # assert the response data
-        self.assertEqual(result.data, "Hi ! I\'m a Flask application.")
+        self.assertEqual(result.status_code, 302)
 
 if __name__ == "__main__":
     unittest.main()
