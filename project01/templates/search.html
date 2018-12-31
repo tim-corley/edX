@@ -45,8 +45,16 @@ Demo App
           <button class="btn btn-lg btn-primary btn-block" type="submit">Search</button>
           <br>
           {% if results %}
-            {{ results }}
+            <h1>Results:</h1>
+            <ul>
+              {% for result in results %}
+              <li>{{ result.title }} By: {{ result.author}}</li>
+              {% endfor %}
+          {% else %}
+            <h1>Results:</h1>
+              <p>No Results.</p>
           {% endif %}
+            </ul>
         </form>
       </div>
 
