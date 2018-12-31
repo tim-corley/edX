@@ -42,10 +42,11 @@ Demo App
             <p class="description">Search by ISBN, Title, Author, or Publication Year.</p>
             {{ form.hidden_tag() }}
             {{ wtf.form_field(form.search) }}
-            {% if results %}
-              {{ results }}
-            {% endif %}
           <button class="btn btn-lg btn-primary btn-block" type="submit">Search</button>
+          <br>
+          {% if results %}
+            {{ results }}
+          {% endif %}
         </form>
       </div>
 

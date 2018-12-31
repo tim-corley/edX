@@ -22,7 +22,7 @@ POSTGRES = os.environ.get('DATABASE_URL')
 SESSION_KEY = os.getenv('PROJECT01_SECRET')
 
 app.config['DEBUG'] = True
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.secret_key = ('SESSION_KEY')
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -85,7 +85,7 @@ def register():
 def search():
     form = BookSearchForm()
     if form.validate_on_submit():
-        details = Books.query.filter_by(title=form.search.data).first()
+        details = Books.query.filter_by(title=form.search.data).one()
         results = details.title + ' By: ' + details.author
         return render_template('search.html', form=form, results=results, name=current_user.username)
     return render_template('search.html', form=form, name=current_user.username)
