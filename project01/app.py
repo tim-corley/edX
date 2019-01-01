@@ -109,10 +109,12 @@ def details(book_id):
     if book is None:
         return render_template("error.html", message="No such book exists here.")
 
-    # Get all details
-    results = db.execute("SELECT * FROM books WHERE id = :book_id",
-                            {"book_id": book_id})
-    return render_template("details.html", book=book)
+    ISBN = book.isbn
+    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": GR_KEY, "isbns": ISBN})
+    data = res.json()
+    rating = data['books'][0]['average_rating']
+
+    return render_template("details.html", book=book, rating=rating)
 
 @app.route('/splash')
 @login_required
