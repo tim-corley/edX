@@ -4,7 +4,8 @@ from flask import Flask, flash, redirect, url_for, render_template, request, ses
 from flask_session import Session
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SelectField
+from flask_migrate import Migrate
+from wtforms import StringField, PasswordField, BooleanField, SelectField, IntegerField
 from wtforms.validators import InputRequired, Email, Length
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -12,6 +13,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__)
+migrate = Migrate(app, db)
 Bootstrap(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -43,6 +45,9 @@ class RegisterForm(FlaskForm):
 class BookSearchForm(FlaskForm):
     search = StringField('Search Term', validators=[InputRequired(), Length(min=4, max=80)])
 
+class BookReviewForm(FlaskForm):
+    new_review = StringField('Review', validators=[InputRequired(), Length(min=4, max=400)])
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -73,11 +78,11 @@ def register():
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data, method='sha256')
         new_user = User(username=form.username.data, email=form.email.data, password=hashed_password)
-        db.session.add(new_user)
-        db.session.commit()
+        db.add(new_user)
+        db.commit()
 
-        if check_password_hash(user.password, form.password.data):
-            login_user(user, remember=form.remember.data)
+        if check_password_hash(new_user.password, form.password.data):
+            login_user(new_user)
             return redirect(url_for('search'))
 
     return render_template('register.html', form=form)
@@ -86,6 +91,7 @@ def register():
 @login_required
 def search():
     form = BookSearchForm()
+
     if form.validate_on_submit():
         text = form.search.data
         results = db.execute(
@@ -101,7 +107,7 @@ def books():
     books = db.execute("SELECT * FROM books").fetchall()
     return render_template("books.html", books=books)
 
-@app.route("/details/<int:book_id>")
+@app.route('/details/<int:book_id>', methods=['GET', 'POST'])
 @login_required
 def details(book_id):
     # Make sure book exists
@@ -109,12 +115,30 @@ def details(book_id):
     if book is None:
         return render_template("error.html", message="No such book exists here.")
 
+    book_id = book.id
     ISBN = book.isbn
     res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": GR_KEY, "isbns": ISBN})
     data = res.json()
     rating = data['books'][0]['average_rating']
 
-    return render_template("details.html", book=book, rating=rating)
+    # reviews = book.reviews
+    book = Books.query.get(book_id)
+    reviews = Reviews.query.filter_by(book_id=book_id).all()
+
+    form = BookReviewForm()
+
+    if form.validate_on_submit():
+        new_review = form.new_review.data
+        book.add_review(new_review)
+        return redirect(url_for('thanks'))
+
+    return render_template("details.html", form=form, book=book, rating=rating, reviews=reviews)
+    # return render_template("details.html",form=form, book=book, gr_rating=gr_rating)
+
+@app.route('/thanks', methods=['GET', 'POST'])
+@login_required
+def thanks():
+    return render_template('thanks.html', name=current_user.username)
 
 @app.route('/splash')
 @login_required

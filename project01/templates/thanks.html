@@ -1,8 +1,7 @@
 {% extends "bootstrap/base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}
-Book Details
+Thanks!
 {% endblock %}
 
 {% block styles %}
@@ -24,7 +23,7 @@ Book Details
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="#">Home</a></li>
+            <li class="active"><a href="#">Home</a></li>
             <li><a href="{{ url_for('login') }}">Login</a></li>
             <li><a href="{{ url_for('register') }}">Register</a></li>
             <li><a href="{{ url_for('search') }}">Search</a></li>
@@ -36,39 +35,8 @@ Book Details
 
     <div class="container">
 
-      <div class="book-details">
-        <h1>Book Details</h1>
-        <br>
-        <ul>
-            <li>Title: {{ book.title }}</li>
-            <li>Author: {{ book.author }}</li>
-            <li>ISBN #: {{ book.isbn }} </li>
-            <li>Year Published: {{ book.year }}</li>
-        </ul>
-        <br>
-        <p> Average Rating (Goodreads): {{ rating }} </p>
-      </div>
-
-      <div class="review-box">
-        <h1>Review Books</h1>
-          <form class="form-reviews" method="POST" action="{{ url_for('details', book_id=book.id) }}">
-            <p class="description">Leave your thoughts on this book (limit 400 characters).</p>
-            {{ form.hidden_tag() }}
-            {{ wtf.form_field(form.new_review) }}
-          <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
-          <br>
-          {% if reviews %}
-            <h1>Reviews:</h1>
-            <ul>
-              {% for review in reviews %}
-              <li>{{ review.comment }}</li>
-              {% endfor %}
-            {% else %}
-              <h1>Reviews:</h1>
-                <p>No Reviews Yet.</p>
-          {% endif %}
-            </ul>
-        </form>
+      <div class="thanks">
+        <h1>Thanks for submitting a review {{ name }}!</h1>
       </div>
 
     </div><!-- /.container -->
