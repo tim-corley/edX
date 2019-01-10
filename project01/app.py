@@ -1,4 +1,4 @@
-import os, requests
+import os, requests, json
 from models import *
 from flask import Flask, flash, redirect, url_for, render_template, request, session, abort, jsonify
 from flask_session import Session
@@ -121,7 +121,7 @@ def details(book_id):
     data = res.json()
     rating = data['books'][0]['average_rating']
 
-    # reviews = book.reviews
+    # TODO switch these to raw SQL commands as per spec
     book = Books.query.get(book_id)
     reviews = Reviews.query.filter_by(book_id=book_id).all()
 
@@ -133,7 +133,29 @@ def details(book_id):
         return redirect(url_for('thanks'))
 
     return render_template("details.html", form=form, book=book, rating=rating, reviews=reviews)
-    # return render_template("details.html",form=form, book=book, gr_rating=gr_rating)
+
+# create an endpoint
+@app.route('/api/<isbn>')
+def book_api(isbn):
+    # Make sure book exists
+    book = db.execute("SELECT * FROM books WHERE isbn = :isbn", {'isbn': isbn}).fetchone()
+    if book is None:
+        return jsonify({'error': 'Invalid ISBN'}), 422
+
+    # Get review info
+    ISBN = book.isbn
+    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": GR_KEY, "isbns": ISBN})
+    data = res.json()
+    average_rating = data['books'][0]['average_rating']
+    reviews_count = data['books'][0]['reviews_count']
+    return jsonify({
+        'title': book.title,
+        'author': book.author,
+        'year': book.year,
+        'isbn': book.isbn,
+        'eviews_count': reviews_count,
+        'average_rating': average_rating
+    })
 
 @app.route('/thanks', methods=['GET', 'POST'])
 @login_required
