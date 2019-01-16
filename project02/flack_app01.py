@@ -6,6 +6,11 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 socketio = SocketIO(app)
 
+@app.before_request
+def before_request():
+    g.user = None
+    if 'user' in session:
+        g.user = session['user']
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -26,8 +31,10 @@ def index():
 
     return redirect(url_for('login'))
 
-@app.before_request
-def before_request():
-    g.user = None
-    if 'user' in session:
-        g.user = session['user']
+@app.route('/flack', methods=['GET', 'POST'])
+def flack():
+    return render_template("channels01.html")
+
+@socketio.on('create channel')
+def create_channel(input):
+    emit('new channel', {'channel_name': channel_name}, broadcast=True)

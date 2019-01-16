@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+        <script src="{{ url_for('static', filename='index.js') }}"></script>
+        <title>Flack</title>
+    </head>
+    <body>
+        <h1>ALL CHANNELS</h1>
+        <ul id="channel_list">
+        </ul>
+        <form id="new-channel">
+            <input id="channel" autocomplete="off" autofocus placeholder="Channel Name" type="text">
+            <input id="submit" value="Create New Channel" type="submit">
+        </form>
+    </body>
+</html>
