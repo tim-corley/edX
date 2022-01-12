@@ -36,7 +36,7 @@ oauthlib==2.1.0
 pandas==0.23.4
 pbr==5.1.0
 Pillow==5.3.0
-pipenv==2018.10.13
+pipenv==2022.1.8
 protobuf==3.6.1
 psycopg2==2.7.6.1
 pyparsing==2.2.2
